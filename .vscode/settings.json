@@ -1,5 +1,8 @@
 {
-    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.7/bin/python3",
+    "python.pythonPath": "python",
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
 }
