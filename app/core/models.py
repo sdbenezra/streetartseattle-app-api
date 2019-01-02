@@ -49,3 +49,16 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Category(models.Model):
+    """Category used for a work"""
+    name = models.CharField(max_length=255, unique=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    def __str__(self):
+        return self.name

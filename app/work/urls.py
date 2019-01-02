@@ -6,6 +6,7 @@ from work import views
 
 router = DefaultRouter()
 router.register('tags', views.TagViewSet)
+router.register('ingredients', views.CategoryViewSet)
 
 app_name = 'work'
 
