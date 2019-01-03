@@ -40,3 +40,9 @@ class WorkSerializer(serializers.ModelSerializer):
             'address', 'lat', 'long', 'tags'
             )
         read_only_fields = ('id',)
+
+
+class WorkDetailSerializer(WorkSerializer):
+    """Serialize a work detail"""
+    category = CategorySerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)

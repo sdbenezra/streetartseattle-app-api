@@ -45,3 +45,10 @@ class WorkViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieve list of works"""
         return self.queryset.order_by('id')
+
+    def get_serializer_class(self):
+        """Return appropriate serializer class"""
+        if self.action == 'retrieve':
+            return serializers.WorkDetailSerializer
+
+        return self.serializer_class
