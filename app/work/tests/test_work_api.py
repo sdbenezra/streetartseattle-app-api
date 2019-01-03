@@ -39,7 +39,7 @@ def sample_work(user, **params):
 
 
 class PublicWorkApiTests(TestCase):
-    """Test work API access"""
+    """Test work API"""
 
     def setUp(self):
         self.client = APIClient()
@@ -47,6 +47,7 @@ class PublicWorkApiTests(TestCase):
             'test@email.com',
             'testpass'
         )
+        self.client.force_authenticate(self.user)
 
     def test_listing_of_works(self):
         """Test retrieving a list of works"""
@@ -76,3 +77,51 @@ class PublicWorkApiTests(TestCase):
 
         serializer = WorkDetailSerializer(work)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_basic_work(self):
+        """Test creating a work"""
+        payload = {
+            'user': self.user,
+            'title': 'Fountain of Wisdom',
+            'artist': 'George Tsutakawa'
+        }
+        res = self.client.post(WORKS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        work = Work.objects.get(id=res.data['id'])
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(work, key))
+
+    def test_create_works_with_tags(self):
+        """Test creating a work with tags"""
+        tag1 = sample_tag(user=self.user, name='Kid Friendly')
+        tag2 = sample_tag(user=self.user, name='Georgetown')
+        payload = {
+            'title': 'Fountain of Wisdom',
+            'tags': [tag1.id, tag2.id],
+        }
+        res = self.client.post(WORKS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        work = Work.objects.get(id=res.data['id'])
+        tags = work.tags.all()
+        self.assertEqual(tags.count(), 2)
+        self.assertIn(tag1, tags)
+        self.assertIn(tag2, tags)
+
+    def test_create_work_with_category(self):
+        """Test create work with category"""
+        category1 = sample_category(user=self.user, name='Sculpture')
+        category2 = sample_category(user=self.user, name='Public')
+        payload = {
+            'title': 'Fountain of Wisdom',
+            'category': [category1.id, category2.id]
+        }
+        res = self.client.post(WORKS_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        work = Work.objects.get(id=res.data['id'])
+        categories = work.category.all()
+        self.assertEqual(categories.count(), 2)
+        self.assertIn(category1, categories)
+        self.assertIn(category2, categories)
