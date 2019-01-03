@@ -62,3 +62,12 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(category), category.name)
+
+    def test_work_str(self):
+        """Test the work string representation"""
+        work = models.Work.objects.create(
+            user=sample_user(),
+            title='Fountain of Wisdom',
+        )
+
+        self.assertEqual(str(work), work.title)

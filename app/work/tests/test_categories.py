@@ -39,3 +39,20 @@ class PublicCategoriesApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
         self.assertEqual(len(res.data), 2)
+
+    def test_create_category_successful(self):
+        """Test create a new category"""
+        payload = {'name': 'Sculpture'}
+        self.client.post(CATEGORIES_URL, payload)
+
+        exists = Category.objects.filter(
+            name=payload['name']
+        ).exists
+        self.assertTrue(exists)
+
+    def test_create_category_invalid(self):
+        """Test creating invalid category fails"""
+        payload = {'name': ''}
+        res = self.client.post(CATEGORIES_URL, payload)
+
+        self.assertTrue(res.status_code, status.HTTP_400_BAD_REQUEST)

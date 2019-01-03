@@ -62,3 +62,27 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Work(models.Model):
+    """Work object"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    title = models.CharField(max_length=255, default='Untitled Work')
+    artist = models.CharField(max_length=255, blank=True)
+    category = models.ManyToManyField('Category', blank=True)
+    tags = models.ManyToManyField('Tag', blank=True)
+    about = models.TextField(blank=True)
+    media = models.CharField(max_length=255, blank=True)
+    measurements = models.CharField(max_length=255, blank=True)
+    date = models.CharField(max_length=255, blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    lat = models.IntegerField(null=True)
+    long = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.title
