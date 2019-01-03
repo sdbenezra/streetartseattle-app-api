@@ -17,6 +17,7 @@ services:
       - DB_NAME=app
       - DB_USER=postgres
       - DB_PASS=localpassword
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
 
