@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Tag, Category
+from core.models import Tag, Category, Work
 
 from work import serializers
 
@@ -35,3 +35,13 @@ class CategoryViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         """Return list of categories, user authentication not required"""
         return self.queryset.order_by('-name')
+
+
+class WorkViewSet(viewsets.ModelViewSet):
+    """Manage works in the database"""
+    queryset = Work.objects.all()
+    serializer_class = serializers.WorkSerializer
+
+    def get_queryset(self):
+        """Retrieve list of works"""
+        return self.queryset.order_by('id')
