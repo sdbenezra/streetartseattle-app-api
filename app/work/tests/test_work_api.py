@@ -125,3 +125,36 @@ class PublicWorkApiTests(TestCase):
         self.assertEqual(categories.count(), 2)
         self.assertIn(category1, categories)
         self.assertIn(category2, categories)
+
+    def test_partial_update_work(self):
+        """Test updating a work with patch"""
+        work = sample_work(user=self.user)
+        work.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(user=self.user, name='Test')
+
+        payload = {'title': 'New Sample Title', 'tags': [new_tag.id]}
+        url = detail_url(work.id)
+        self.client.patch(url, payload)
+
+        work.refresh_from_db()
+        self.assertEqual(work.title, payload['title'])
+        tags = work.tags.all()
+        self.assertEqual(len(tags), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_work(self):
+        """Test updating work with put"""
+        work = sample_work(user=self.user)
+        work.tags.add(sample_tag(user=self.user))
+        payload = {
+            'title': 'Another new title',
+            'artist': 'New Artist'
+        }
+        url = detail_url(work.id)
+        self.client.put(url, payload)
+
+        work.refresh_from_db()
+        self.assertEqual(work.title, payload['title'])
+        self.assertEqual(work.artist, payload['artist'])
+        tags = work.tags.all()
+        self.assertEqual(len(tags), 0)
