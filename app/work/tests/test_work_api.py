@@ -204,3 +204,58 @@ class WorkImageUploadTests(TestCase):
         res = self.client.post(url, {'image': 'notimage'}, format='multipart')
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+
+class WorkFilteringTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = get_user_model().objects.create_user(
+            'email@email.com', 'testpass'
+        )
+        self.client.force_authenticate(self.user)
+
+    def test_filter_works_by_tags(self):
+        """Test filtering works with specific tags"""
+        work1 = sample_work(user=self.user, title='Fountain of Wisdom')
+        work2 = sample_work(user=self.user, title='The Falls')
+        work3 = sample_work(user=self.user, title='Hello Friends')
+        tag1 = sample_tag(user=self.user, name='Family Friendly')
+        tag2 = sample_tag(user=self.user, name='Downtown')
+        work1.tags.add(tag1)
+        work2.tags.add(tag2)
+
+        res = self.client.get(
+            WORKS_URL,
+            {'tags': '{},{}'.format(tag1.id, tag2.id)}
+        )
+
+        serializer1 = WorkSerializer(work1)
+        serializer2 = WorkSerializer(work2)
+        serializer3 = WorkSerializer(work3)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
+    def test_filter_works_by_category(self):
+        """Test returning works with specific categories"""
+        work1 = sample_work(user=self.user, title='World Union')
+        work2 = sample_work(user=self.user, title='Mega Mile')
+        work3 = sample_work(user=self.user, title='Hello Friends')
+        category1 = sample_category(user=self.user, name='Sculpture')
+        category2 = sample_category(user=self.user, name='Mural')
+        work1.category.add(category1)
+        work2.category.add(category2)
+
+        res = self.client.get(
+            WORKS_URL,
+            {'category': f'{category1.id},{category2.id}'}
+        )
+
+        serializer1 = WorkSerializer(work1)
+        serializer2 = WorkSerializer(work2)
+        serializer3 = WorkSerializer(work3)
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
