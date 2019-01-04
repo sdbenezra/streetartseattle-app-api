@@ -46,3 +46,12 @@ class WorkDetailSerializer(WorkSerializer):
     """Serialize a work detail"""
     category = CategorySerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
+
+
+class WorkImageSerializer(serializers.ModelSerializer):
+    """Serializer for uploading images to works"""
+
+    class Meta:
+        model = Work
+        fields = ('id', 'image')
+        read_only_fields = ('id',)
