@@ -44,9 +44,25 @@ class WorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = serializers.WorkSerializer
 
+    def _params_to_ints(self, qs):
+        """Convert a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(',')]
+
     def get_queryset(self):
         """Retrieve list of works"""
-        return self.queryset.order_by('id')
+        categories = self.request.query_params.get('category')
+        queryset = self.queryset
+
+        if self.request.user:
+            tags = self.request.query_params.get('tags')
+            if tags:
+                tag_ids = self._params_to_ints(tags)
+                queryset = queryset.filter(tags__id__in=tag_ids)
+        if categories:
+            category_ids = self._params_to_ints(categories)
+            queryset = queryset.filter(category__id__in=category_ids)
+
+        return queryset
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
