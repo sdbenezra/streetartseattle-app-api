@@ -49,7 +49,7 @@ class WorkViewSet(viewsets.ModelViewSet):
             category_ids = self._params_to_ints(categories)
             queryset = queryset.filter(category__id__in=category_ids)
 
-        return queryset
+        return queryset.order_by('id')
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
