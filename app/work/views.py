@@ -18,11 +18,6 @@ class TagViewSet(viewsets.GenericViewSet,
         """Return objects for the current authenticated user only"""
         return self.queryset.order_by('name')
 
-    def perform_create(self, serializer):
-        """Create a new tag"""
-        serializer.save(user=self.request.user)
-
-
 class CategoryViewSet(viewsets.GenericViewSet,
                       mixins.ListModelMixin,
                       mixins.CreateModelMixin):
@@ -67,10 +62,6 @@ class WorkViewSet(viewsets.ModelViewSet):
             return serializers.WorkImageSerializer
 
         return self.serializer_class
-
-    def perform_create(self, serializer):
-        """Create a new work"""
-        serializer.save(user=self.request.user)
 
     @action(methods=['POST'], detail=True, url_path='upload-image')
     def upload_image(self, request, pk=None):
