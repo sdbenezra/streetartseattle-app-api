@@ -1,15 +1,13 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, mixins, status
+from rest_framework import viewsets, status
 
 from core.models import Tag, Category, Work
 
 from work import serializers
 
 
-class TagViewSet(viewsets.GenericViewSet,
-                 mixins.ListModelMixin,
-                 mixins.CreateModelMixin):
+class TagViewSet(viewsets.ModelViewSet):
     """Manage tags in the database"""
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
@@ -19,9 +17,7 @@ class TagViewSet(viewsets.GenericViewSet,
         return self.queryset.order_by('name')
 
 
-class CategoryViewSet(viewsets.GenericViewSet,
-                      mixins.ListModelMixin,
-                      mixins.CreateModelMixin):
+class CategoryViewSet(viewsets.ModelViewSet):
     """Manage categories in the database"""
     queryset = Category.objects.all()
     serializer_class = serializers.CategorySerializer
