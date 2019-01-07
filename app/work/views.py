@@ -1,8 +1,6 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, mixins, status
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 
 from core.models import Tag, Category, Work
 
@@ -13,14 +11,12 @@ class TagViewSet(viewsets.GenericViewSet,
                  mixins.ListModelMixin,
                  mixins.CreateModelMixin):
     """Manage tags in the database"""
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
     queryset = Tag.objects.all()
     serializer_class = serializers.TagSerializer
 
     def get_queryset(self):
         """Return objects for the current authenticated user only"""
-        return self.queryset.filter(user=self.request.user).order_by('-name')
+        return self.queryset.order_by('name')
 
     def perform_create(self, serializer):
         """Create a new tag"""
@@ -36,7 +32,7 @@ class CategoryViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         """Return list of categories, user authentication not required"""
-        return self.queryset.order_by('-name')
+        return self.queryset.order_by('name')
 
 
 class WorkViewSet(viewsets.ModelViewSet):
@@ -50,14 +46,13 @@ class WorkViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve list of works"""
+        tags = self.request.query_params.get('tags')
         categories = self.request.query_params.get('category')
         queryset = self.queryset
 
-        if self.request.user:
-            tags = self.request.query_params.get('tags')
-            if tags:
-                tag_ids = self._params_to_ints(tags)
-                queryset = queryset.filter(tags__id__in=tag_ids)
+        if tags:
+            tag_ids = self._params_to_ints(tags)
+            queryset = queryset.filter(tags__id__in=tag_ids)
         if categories:
             category_ids = self._params_to_ints(categories)
             queryset = queryset.filter(category__id__in=category_ids)
