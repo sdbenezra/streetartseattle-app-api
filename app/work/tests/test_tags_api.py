@@ -49,7 +49,7 @@ class PrivateTagsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
-    def test_tags_limited_to_user(self):
+    def test_tags_not_limited_to_user(self):
         """Test that tags returned are not just for the authenticated user"""
         user2 = get_user_model().objects.create_user(
             'other@email.com',
@@ -72,7 +72,6 @@ class PrivateTagsApiTests(TestCase):
         self.client.post(TAGS_URL, payload)
 
         exists = Tag.objects.filter(
-            user=self.user,
             name=payload['name']
         ).exists()
 

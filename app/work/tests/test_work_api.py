@@ -91,7 +91,6 @@ class PublicWorkApiTests(TestCase):
     def test_create_basic_work(self):
         """Test creating a work"""
         payload = {
-            'user': self.user,
             'title': 'Fountain of Wisdom',
             'artist': 'George Tsutakawa'
         }

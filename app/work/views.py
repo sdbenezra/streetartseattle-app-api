@@ -15,8 +15,9 @@ class TagViewSet(viewsets.GenericViewSet,
     serializer_class = serializers.TagSerializer
 
     def get_queryset(self):
-        """Return objects for the current authenticated user only"""
+        """Return list of tags"""
         return self.queryset.order_by('name')
+
 
 class CategoryViewSet(viewsets.GenericViewSet,
                       mixins.ListModelMixin,
