@@ -23,13 +23,16 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class WorkSerializer(serializers.ModelSerializer):
     """Serializer for work objects"""
-    category = serializers.PrimaryKeyRelatedField(
+    category = serializers.SlugRelatedField(
         many=True,
-        queryset=Category.objects.all()
+        queryset=Category.objects.all(),
+        slug_field='name'
+
     )
-    tags = serializers.PrimaryKeyRelatedField(
+    tags = serializers.SlugRelatedField(
         many=True,
-        queryset=Tag.objects.all()
+        queryset=Tag.objects.all(),
+        slug_field='name'
     )
 
     class Meta:

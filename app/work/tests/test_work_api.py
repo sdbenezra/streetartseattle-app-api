@@ -107,7 +107,7 @@ class PublicWorkApiTests(TestCase):
         tag2 = sample_tag(user=self.user, name='Georgetown')
         payload = {
             'title': 'Fountain of Wisdom',
-            'tags': [tag1.id, tag2.id],
+            'tags': [tag1.name, tag2.name],
         }
         res = self.client.post(WORKS_URL, payload)
 
@@ -124,7 +124,7 @@ class PublicWorkApiTests(TestCase):
         category2 = sample_category(user=self.user, name='Public')
         payload = {
             'title': 'Fountain of Wisdom',
-            'category': [category1.id, category2.id]
+            'category': [category1.name, category2.name]
         }
         res = self.client.post(WORKS_URL, payload)
 
@@ -141,7 +141,7 @@ class PublicWorkApiTests(TestCase):
         work.tags.add(sample_tag(user=self.user))
         new_tag = sample_tag(user=self.user, name='Test')
 
-        payload = {'title': 'New Sample Title', 'tags': [new_tag.id]}
+        payload = {'title': 'New Sample Title', 'tags': [new_tag.name]}
         url = detail_url(work.id)
         self.client.patch(url, payload)
 
