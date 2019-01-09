@@ -49,17 +49,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
-class Tag(models.Model):
-    """Tag to be used for a work"""
-    name = models.CharField(max_length=255, unique=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        null=True,
-        on_delete=models.SET_NULL
-    )
+# class Tag(models.Model):
+#     """Tag to be used for a work"""
+#     name = models.CharField(max_length=255, unique=True)
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         null=True,
+#         on_delete=models.SET_NULL
+#     )
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
 class Category(models.Model):
@@ -85,15 +85,15 @@ class Work(models.Model):
     title = models.CharField(max_length=255, default='Untitled Work')
     artist = models.CharField(max_length=255, blank=True)
     category = models.ManyToManyField('Category', blank=True)
-    tags = models.ManyToManyField('Tag', blank=True)
+    tags = models.CharField(max_length=255, blank=True)
     about = models.TextField(blank=True)
     media = models.CharField(max_length=255, blank=True)
     measurements = models.CharField(max_length=255, blank=True)
     date = models.CharField(max_length=255, blank=True)
     location = models.CharField(max_length=255, blank=True)
     address = models.CharField(max_length=255, blank=True)
-    lat = models.IntegerField(null=True)
-    long = models.IntegerField(null=True)
+    lat = models.CharField(max_length=255, blank=True)
+    long = models.CharField(max_length=255, blank=True)
     image = models.ImageField(null=True, upload_to=work_image_file_path)
 
     def __str__(self):

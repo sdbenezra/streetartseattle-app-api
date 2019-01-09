@@ -10,7 +10,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from core.models import Work, Tag, Category
+from core.models import Work, Category
 
 from work.serializers import WorkSerializer, WorkDetailSerializer
 
@@ -26,11 +26,6 @@ def image_upload_url(work_id):
 def detail_url(work_id):
     """Return work detail URL"""
     return reverse('work:work-detail', args=[work_id])
-
-
-def sample_tag(user, name='kid-friendly'):
-    """Create and return a sample tag"""
-    return Tag.objects.create(user=user, name=name)
 
 
 def sample_category(user, name='Sculpture'):
@@ -79,8 +74,6 @@ class PublicWorkApiTests(TestCase):
     def test_view_work_detail(self):
         """Test viewing a detail of a work"""
         work = sample_work(user=self.user)
-        work.tags.add(sample_tag(user=self.user))
-        work.category.add(sample_category(user=self.user))
 
         url = detail_url(work.id)
         res = self.client.get(url)
@@ -100,23 +93,6 @@ class PublicWorkApiTests(TestCase):
         work = Work.objects.get(id=res.data['id'])
         for key in payload.keys():
             self.assertEqual(payload[key], getattr(work, key))
-
-    def test_create_works_with_tags(self):
-        """Test creating a work with tags"""
-        tag1 = sample_tag(user=self.user, name='Kid Friendly')
-        tag2 = sample_tag(user=self.user, name='Georgetown')
-        payload = {
-            'title': 'Fountain of Wisdom',
-            'tags': [tag1.name, tag2.name],
-        }
-        res = self.client.post(WORKS_URL, payload)
-
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        work = Work.objects.get(id=res.data['id'])
-        tags = work.tags.all()
-        self.assertEqual(tags.count(), 2)
-        self.assertIn(tag1, tags)
-        self.assertIn(tag2, tags)
 
     def test_create_work_with_category(self):
         """Test create work with category"""
@@ -138,23 +114,17 @@ class PublicWorkApiTests(TestCase):
     def test_partial_update_work(self):
         """Test updating a work with patch"""
         work = sample_work(user=self.user)
-        work.tags.add(sample_tag(user=self.user))
-        new_tag = sample_tag(user=self.user, name='Test')
 
-        payload = {'title': 'New Sample Title', 'tags': [new_tag.name]}
+        payload = {'title': 'New Sample Title'}
         url = detail_url(work.id)
         self.client.patch(url, payload)
 
         work.refresh_from_db()
         self.assertEqual(work.title, payload['title'])
-        tags = work.tags.all()
-        self.assertEqual(len(tags), 1)
-        self.assertIn(new_tag, tags)
 
     def test_full_update_work(self):
         """Test updating work with put"""
         work = sample_work(user=self.user)
-        work.tags.add(sample_tag(user=self.user))
         payload = {
             'title': 'Another new title',
             'artist': 'New Artist'
@@ -165,8 +135,6 @@ class PublicWorkApiTests(TestCase):
         work.refresh_from_db()
         self.assertEqual(work.title, payload['title'])
         self.assertEqual(work.artist, payload['artist'])
-        tags = work.tags.all()
-        self.assertEqual(len(tags), 0)
 
 
 class WorkImageUploadTests(TestCase):
@@ -213,28 +181,6 @@ class WorkFilteringTests(TestCase):
             'email@email.com', 'testpass'
         )
         self.client.force_authenticate(self.user)
-
-    def test_filter_works_by_tags(self):
-        """Test filtering works with specific tags"""
-        work1 = sample_work(user=self.user, title='Fountain of Wisdom')
-        work2 = sample_work(user=self.user, title='The Falls')
-        work3 = sample_work(user=self.user, title='Hello Friends')
-        tag1 = sample_tag(user=self.user, name='Family Friendly')
-        tag2 = sample_tag(user=self.user, name='Downtown')
-        work1.tags.add(tag1)
-        work2.tags.add(tag2)
-
-        res = self.client.get(
-            WORKS_URL,
-            {'tags': '{},{}'.format(tag1.id, tag2.id)}
-        )
-
-        serializer1 = WorkSerializer(work1)
-        serializer2 = WorkSerializer(work2)
-        serializer3 = WorkSerializer(work3)
-        self.assertIn(serializer1.data, res.data)
-        self.assertIn(serializer2.data, res.data)
-        self.assertNotIn(serializer3.data, res.data)
 
     def test_filter_works_by_category(self):
         """Test returning works with specific categories"""

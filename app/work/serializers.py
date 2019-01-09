@@ -1,15 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Tag, Category, Work
-
-
-class TagSerializer(serializers.ModelSerializer):
-    """Serializer for tag objects"""
-
-    class Meta:
-        model = Tag
-        fields = ('id', 'name')
-        read_only_fields = ('id',)
+from core.models import Category, Work
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -27,12 +18,6 @@ class WorkSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Category.objects.all(),
         slug_field='name'
-
-    )
-    tags = serializers.SlugRelatedField(
-        many=True,
-        queryset=Tag.objects.all(),
-        slug_field='name'
     )
 
     class Meta:
@@ -47,8 +32,7 @@ class WorkSerializer(serializers.ModelSerializer):
 
 class WorkDetailSerializer(WorkSerializer):
     """Serialize a work detail"""
-    category = CategorySerializer(many=True, read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
+    category = CategorySerializer(many=True)
 
 
 class WorkImageSerializer(serializers.ModelSerializer):

@@ -2,19 +2,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 
-from core.models import Tag, Category, Work
+from core.models import Category, Work
 
 from work import serializers
-
-
-class TagViewSet(viewsets.ModelViewSet):
-    """Manage tags in the database"""
-    queryset = Tag.objects.all()
-    serializer_class = serializers.TagSerializer
-
-    def get_queryset(self):
-        """Return list of tags"""
-        return self.queryset.order_by('name')
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -38,13 +28,9 @@ class WorkViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve list of works"""
-        tags = self.request.query_params.get('tags')
         categories = self.request.query_params.get('category')
         queryset = self.queryset
 
-        if tags:
-            tag_ids = self._params_to_ints(tags)
-            queryset = queryset.filter(tags__id__in=tag_ids)
         if categories:
             category_ids = self._params_to_ints(categories)
             queryset = queryset.filter(category__id__in=category_ids)
