@@ -26,6 +26,27 @@ class WorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.all()
     serializer_class = serializers.WorkSerializer
 
+    def _get_query(self, query_string):
+        query = None
+        findterms = re.compile(r'"([^"]+)"|(\S+)').findall
+        normspace = re.compile(r'\s{2,}').sub
+        terms = [normspace('', (t[0] or t[1]).strip())
+                 for t in findterms(query_string)]
+        for term in terms:
+            or_query = None
+            for field_name in ['category__name', 'title',
+                               'artist', 'location']:
+                q = Q(**{"%s__icontains" % field_name: term})
+                if or_query is None:
+                    or_query = q
+                else:
+                    or_query = or_query | q
+                if query is None:
+                    query = or_query
+                else:
+                    query = query | or_query
+        return query
+
     def _params_to_ints(self, qs):
         """Convert a list of string IDs to a list of integers"""
         return [int(str_id) for str_id in qs.split(',')]
@@ -33,26 +54,13 @@ class WorkViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieve list of works"""
         search_term = self.request.query_params.get('search')
-        queryset = self.queryset
-
-        findterms = re.compile(r'"([^"]+)"|(\S+)').findall
-        normspace = re.compile(r'\s{2,}').sub
-        search = [normspace('',(t[0] or t[1]).strip()) for t in findterms(search_term)]
-        query = None
-
-        for term in search:
-            or_query = None
-            for field_name in ['category__name', 'title', 'artist', 'location']:
-                q = queryset.filter(Q(**{"%s__icontains" % field_name: term}))
-                if or_query is None:
-                    or_query = q
-                else:
-                    or_query = or_query | q
-            if query is None:
-                query = or_query
-            else:
-                query = query & or_query
-            return query
+        found_entries = None
+        if search_term:
+            entry_query = self._get_query(search_term)
+            found_entries = self.queryset.filter(entry_query)
+            return found_entries
+        else:
+            return self.queryset
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""

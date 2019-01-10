@@ -173,7 +173,7 @@ class WorkImageUploadTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class WorkFilteringTests(TestCase):
+class WorkSearchTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
@@ -182,7 +182,7 @@ class WorkFilteringTests(TestCase):
         )
         self.client.force_authenticate(self.user)
 
-    def test_filter_works_by_category(self):
+    def test_search_works_by_category(self):
         """Test returning works with specific categories"""
         work1 = sample_work(user=self.user, title='World Union')
         work2 = sample_work(user=self.user, title='Mega Mile')
@@ -194,7 +194,7 @@ class WorkFilteringTests(TestCase):
 
         res = self.client.get(
             WORKS_URL,
-            {'category': f'{category1.id},{category2.id}'}
+            {'search': f'{category1.name} {work2.title}'}
         )
 
         serializer1 = WorkSerializer(work1)
