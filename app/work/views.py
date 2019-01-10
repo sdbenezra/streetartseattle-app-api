@@ -8,6 +8,8 @@ from django.db.models import Q
 
 from work import serializers
 
+import re
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """Manage categories in the database"""
@@ -33,12 +35,24 @@ class WorkViewSet(viewsets.ModelViewSet):
         search_term = self.request.query_params.get('search')
         queryset = self.queryset
 
-        if search_term:
-            queryset = queryset.filter( Q(category__name__icontains=search_term) |\
-            Q(title__icontains=search_term) |\
-            Q(artist__icontains=search_term) |\
-            Q(location__icontains=search_term) )
-        return queryset
+        findterms = re.compile(r'"([^"]+)"|(\S+)').findall
+        normspace = re.compile(r'\s{2,}').sub
+        search = [normspace('',(t[0] or t[1]).strip()) for t in findterms(search_term)]
+        query = None
+
+        for term in search:
+            or_query = None
+            for field_name in ['category__name', 'title', 'artist', 'location']:
+                q = queryset.filter(Q(**{"%s__icontains" % field_name: term}))
+                if or_query is None:
+                    or_query = q
+                else:
+                    or_query = or_query | q
+            if query is None:
+                query = or_query
+            else:
+                query = query & or_query
+            return query
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
