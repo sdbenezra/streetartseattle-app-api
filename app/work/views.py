@@ -4,6 +4,8 @@ from rest_framework import viewsets, status
 
 from core.models import Category, Work
 
+from django.db.models import Q
+
 from work import serializers
 
 
@@ -28,14 +30,15 @@ class WorkViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve list of works"""
-        categories = self.request.query_params.get('category')
+        search_term = self.request.query_params.get('search')
         queryset = self.queryset
 
-        if categories:
-            category_ids = self._params_to_ints(categories)
-            queryset = queryset.filter(category__id__in=category_ids)
-
-        return queryset.order_by('id')
+        if search_term:
+            queryset = queryset.filter( Q(category__name__icontains=search_term) |\
+            Q(title__icontains=search_term) |\
+            Q(artist__icontains=search_term) |\
+            Q(location__icontains=search_term) )
+        return queryset
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
