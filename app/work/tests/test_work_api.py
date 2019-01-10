@@ -65,7 +65,7 @@ class PublicWorkApiTests(TestCase):
 
         res = self.client.get(WORKS_URL)
 
-        works = Work.objects.all().order_by('id')
+        works = Work.objects.all().order_by('-id')
         serializer = WorkSerializer(works, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 2)

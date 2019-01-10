@@ -60,7 +60,7 @@ class WorkViewSet(viewsets.ModelViewSet):
             found_entries = self.queryset.filter(entry_query)
             return found_entries
         else:
-            return self.queryset
+            return self.queryset.order_by('-id')
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
