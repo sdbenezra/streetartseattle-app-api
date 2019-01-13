@@ -29,8 +29,8 @@ class PublicCategoriesApiTests(TestCase):
         """Test all categories listed for a user not logged in"""
         user1 = get_user_model().objects.create_user('email@test.com', 'pass1')
         user2 = get_user_model().objects.create_user('email2@tst.com', 'pass2')
-        Category.objects.create(user=user1, name='Sculpture')
-        Category.objects.create(user=user2, name='Mural')
+        Category.objects.create(user=user1, name='Test Category1')
+        Category.objects.create(user=user2, name='Test Category2')
 
         res = self.client.get(CATEGORIES_URL)
 
@@ -38,11 +38,10 @@ class PublicCategoriesApiTests(TestCase):
         serializer = CategorySerializer(categories, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
-        self.assertEqual(len(res.data), 2)
 
     def test_create_category_successful(self):
         """Test create a new category"""
-        payload = {'name': 'Sculpture'}
+        payload = {'name': 'Test Category1'}
         self.client.post(CATEGORIES_URL, payload)
 
         exists = Category.objects.filter(

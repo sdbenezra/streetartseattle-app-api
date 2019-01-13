@@ -28,7 +28,7 @@ def detail_url(work_id):
     return reverse('work:work-detail', args=[work_id])
 
 
-def sample_category(user, name='Sculpture'):
+def sample_category(user, name='Test Category1'):
     """Create and return a sample category"""
     return Category.objects.create(user=user, name=name)
 
@@ -68,7 +68,6 @@ class PublicWorkApiTests(TestCase):
         works = Work.objects.all().order_by('-id')
         serializer = WorkSerializer(works, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(res.data), 2)
         self.assertEqual(res.data, serializer.data)
 
     def test_view_work_detail(self):
@@ -96,8 +95,8 @@ class PublicWorkApiTests(TestCase):
 
     def test_create_work_with_category(self):
         """Test create work with category"""
-        category1 = sample_category(user=self.user, name='Sculpture')
-        category2 = sample_category(user=self.user, name='Public')
+        category1 = sample_category(user=self.user, name='Test Category1')
+        category2 = sample_category(user=self.user, name='Test Category2')
         payload = {
             'title': 'Fountain of Wisdom',
             'category': [category1.name, category2.name]
@@ -187,8 +186,8 @@ class WorkSearchTests(TestCase):
         work1 = sample_work(user=self.user, title='World Union')
         work2 = sample_work(user=self.user, title='Mega Mile')
         work3 = sample_work(user=self.user, title='Hello Friends')
-        category1 = sample_category(user=self.user, name='Sculpture')
-        category2 = sample_category(user=self.user, name='Mural')
+        category1 = sample_category(user=self.user, name='Test Category1')
+        category2 = sample_category(user=self.user, name='Test Category2')
         work1.category.add(category1)
         work2.category.add(category2)
 

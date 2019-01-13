@@ -51,7 +51,7 @@ class ModelTests(TestCase):
         """Test the category string representation"""
         category = models.Category.objects.create(
             user=sample_user(),
-            name='Sculpture'
+            name='Test Category'
         )
 
         self.assertEqual(str(category), category.name)
