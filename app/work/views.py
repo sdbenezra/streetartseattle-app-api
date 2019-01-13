@@ -35,7 +35,7 @@ class WorkViewSet(viewsets.ModelViewSet):
         for term in terms:
             or_query = None
             for field_name in ['category__name', 'title',
-                               'artist', 'location']:
+                               'artist', 'location', 'tags']:
                 q = Q(**{"%s__icontains" % field_name: term})
                 if or_query is None:
                     or_query = q
@@ -58,7 +58,7 @@ class WorkViewSet(viewsets.ModelViewSet):
         if search_term:
             entry_query = self._get_query(search_term)
             found_entries = self.queryset.filter(entry_query)
-            return found_entries
+            return set(found_entries)
         else:
             return self.queryset.order_by('-id')
 
