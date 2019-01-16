@@ -25,7 +25,8 @@ class WorkSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'artist', 'category', 'about',
             'media', 'measurements', 'date', 'location',
-            'address', 'lat', 'long', 'tags', 'image'
+            'address', 'lat', 'long', 'tags', 'image',
+            'imagecredit'
             )
         read_only_fields = ('id',)
 
