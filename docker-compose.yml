@@ -17,7 +17,11 @@ services:
       - DB_NAME=app
       - DB_USER=postgres
       - DB_PASS=localpassword
-      - SECRET_KEY="${SECRET_KEY}"
+      - SECRET_KEY=$SECRET_KEY
+      - USE_S3=TRUE
+      - AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+      - AWS_STORAGE_BUCKET_NAME=$AWS_STORAGE_BUCKET_NAME
     depends_on:
       - db
 
