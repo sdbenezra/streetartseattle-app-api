@@ -152,7 +152,7 @@ else:
     MEDIA_URL = '/media/'
     MEDIA_ROOT = '/vol/web/media'
 
-STATICFILES_DIRS = ['/vol/web/static/']
+STATICFILES_DIRS = ['/vol/web/static/staticfiles']
 
 
 AUTH_USER_MODEL = 'core.User'
