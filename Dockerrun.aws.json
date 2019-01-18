@@ -4,10 +4,5 @@
       {
         "ContainerPort": "8080"
       }
-    ],
-    "Volumes": [
-      {
-        "ContainerDirectory": "/app"
-      }
     ]
   }
