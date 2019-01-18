@@ -22,3 +22,4 @@ RUN adduser -D user
 RUN chown -R user:user /vol/
 RUN chmod -R 755 /vol/web
 USER user
+RUN python manage.py wait_for_db && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
