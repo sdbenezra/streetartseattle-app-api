@@ -3,6 +3,8 @@ LABEL maintainer="https://github.com/sdbenezra"
 
 ENV PYTHONUNBUFFERED 1
 
+EXPOSE 8080
+
 COPY ./requirements.txt /requirements.txt
 RUN apk add --update --no-cache postgresql-client jpeg-dev
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
