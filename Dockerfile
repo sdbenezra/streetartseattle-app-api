@@ -25,4 +25,5 @@ USER user
 
 ENV UWSGI_WSGI_FILE=app/wsgi.py UWSGI_HTTP=:8080 UWSGI_MASTER=1 UWSGI_WORKERS=2 UWSGI_THREADS=8 UWSGI_UID=1000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["/usr/local/bin/uwsgi", "--http-auto-chunked", "--http-keepalive"]
