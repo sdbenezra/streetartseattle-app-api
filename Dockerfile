@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8080
 
 COPY ./requirements.txt /requirements.txt
-RUN apk add --update --no-cache postgresql-client jpeg-dev pcre pcre-dev
+RUN apk add --update --no-cache postgresql-client jpeg-dev pcre pcre-dev python py-pip
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
      gcc libc-dev linux-headers python-dev postgresql-dev musl-dev zlib zlib-dev
 RUN pip install -r /requirements.txt
@@ -14,7 +14,7 @@ RUN apk del .tmp-build-deps
 
 RUN /bin/sh -c "mkdir -p /app"
 WORKDIR /app
-COPY ./app/ /app
+COPY . /app
 
 RUN mkdir -p /vol/web/media
 RUN mkdir -p /vol/web/static
