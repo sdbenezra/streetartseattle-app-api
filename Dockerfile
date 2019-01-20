@@ -14,7 +14,7 @@ RUN apk del .tmp-build-deps
 
 RUN /bin/sh -c "mkdir -p /app"
 WORKDIR /app
-COPY . /app
+COPY ./app/ /app
 
 RUN mkdir -p /vol/web/media
 RUN mkdir -p /vol/web/static
