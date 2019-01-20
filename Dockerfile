@@ -6,10 +6,9 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8080
 
 COPY ./requirements.txt /requirements.txt
-RUN apk add --update --no-cache postgresql-client jpeg-dev
+RUN apk add --update --no-cache postgresql-client jpeg-dev pcre pcre-dev
 RUN apk add --update --no-cache --virtual .tmp-build-deps \
      gcc libc-dev linux-headers python-dev postgresql-dev musl-dev zlib zlib-dev
-RUN apk install pcre pcre-dev
 RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
 
